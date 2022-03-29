@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:id="@+id/rl2">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="1dp"
+        app:cardUseCompatPadding="true"
+        android:background="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp">
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/c"
+                android:background="#FFFFFF"
+                android:layout_weight="8">
+            </CheckBox>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="abhay"
+                    android:textSize="16sp"
+                    android:id="@+id/t"
+                    android:layout_weight="2"
+                    android:textColor="#DE000000"
+                    android:background="#FFFFFF"
+                    android:paddingBottom="1dp"
+                    android:gravity="center_vertical">
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="abhay"
+                    android:textSize="14sp"
+                    android:id="@+id/t2"
+                    android:maxLines="1"
+                    android:layout_weight="2"
+                    android:textColor="#AD000000"
+                    android:background="#FFFFFF"
+                    android:paddingBottom="2dp"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end">
+
+
+                </TextView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
