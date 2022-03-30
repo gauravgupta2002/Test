@@ -17,6 +17,29 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:hint="incrsesing"
+        android:id="@+id/sort"
+        android:layout_marginStart="10dp"
+        />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:hint="decreasing"
+            android:id="@+id/dcsort"
+            android:layout_marginStart="30dp"
+            />
+
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

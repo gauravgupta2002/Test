@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class filteradapter extends RecyclerView.Adapter<filteradapter.cardViewHolder>{
     private ArrayList<filterdata> mlist;
-    //private ArrayList<filterdata> nlist;
     private Context context;
 
     public filteradapter(ArrayList<filterdata> mlist, Context context) {
