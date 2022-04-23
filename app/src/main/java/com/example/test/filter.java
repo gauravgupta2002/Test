@@ -1,38 +1,49 @@
 package com.example.test;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-/*
-public class filter extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-}*/
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class filter extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private filteradapter adapter;
     private ArrayList<filterdata> list, list2;
-    Button button,button2;
+    Button button,button2,generatePDFbtn;
+
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +85,21 @@ public class filter extends AppCompatActivity {
                     }
                 });
                 adapter.filterList(list2);
+            }
+        });
+
+        generatePDFbtn = (Button) findViewById(R.id.pdf);
+
+        if (checkPermission()) {
+            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        } else {
+            requestPermission();
+        }
+
+        generatePDFbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generatePDF(list2);
             }
         });
 
@@ -210,10 +236,74 @@ public class filter extends AppCompatActivity {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        //recyclerView.setDrawingCacheEnabled(true);
-        //recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        //recyclerView.setItemViewCacheSize(list.size());
-
 
     }
+
+
+    private void generatePDF(ArrayList<filterdata> list2) {
+
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+
+        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(250, 400, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        Canvas canvas = myPage.getCanvas();
+
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextSize(8.0f);
+        paint.setColor(Color.BLACK);
+
+        int startX = 10, startY = 100 , endPos = mypageInfo.getPageWidth()-10;
+        for(int i=0;i<list2.size();i++){
+            filterdata data = list2.get(i);
+            canvas.drawText(data.getText(),startX,startY,paint);
+            startY+=5;
+        }
+
+        pdfDocument.finishPage(myPage);
+
+
+        File file = new File(Environment.getExternalStorageDirectory(), "Colleges.pdf");
+        try {
+            pdfDocument.writeTo(new FileOutputStream(file));
+
+            Toast.makeText(filter.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pdfDocument.close();
+    }
+
+
+    private boolean checkPermission() {
+        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+
+                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                if (writeStorage && readStorage) {
+                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }
+    }
+
 }

@@ -23,18 +23,26 @@
         android:orientation="horizontal">
 
     <Button
-        android:layout_width="150dp"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         android:hint="incrsesing"
         android:id="@+id/sort"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="3dp"
         />
 
         <Button
-            android:layout_width="150dp"
+            android:layout_width="100dp"
             android:layout_height="50dp"
             android:hint="decreasing"
             android:id="@+id/dcsort"
+            android:layout_marginStart="30dp"
+            />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:hint="pdf"
+            android:id="@+id/pdf"
             android:layout_marginStart="30dp"
             />
 
