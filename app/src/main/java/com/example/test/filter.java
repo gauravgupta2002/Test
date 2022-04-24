@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -41,9 +42,7 @@ public class filter extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private filteradapter adapter;
     private ArrayList<filterdata> list, list2;
-    Button button,button2,generatePDFbtn;
-
-    private static final int PERMISSION_REQUEST_CODE = 200;
+    Button button,button2,buttonpdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,20 +87,11 @@ public class filter extends AppCompatActivity {
             }
         });
 
-        generatePDFbtn = (Button) findViewById(R.id.pdf);
 
-        if (checkPermission()) {
-            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-        } else {
-            requestPermission();
-        }
+        buttonpdf = findViewById(R.id.pdf);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PackageManager.PERMISSION_GRANTED);
 
-        generatePDFbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                generatePDF(list2);
-            }
-        });
+        createPdf(list2);
 
     }
 
@@ -239,71 +229,66 @@ public class filter extends AppCompatActivity {
 
     }
 
+    private void createPdf(ArrayList<filterdata> list2) {
+        buttonpdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PdfDocument pdfDocument = new PdfDocument();
+                Paint paint = new Paint();
 
-    private void generatePDF(ArrayList<filterdata> list2) {
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(250,1000,1).create();
+                PdfDocument.Page myPage = pdfDocument.startPage(pageInfo);
 
-        PdfDocument pdfDocument = new PdfDocument();
-        Paint paint = new Paint();
+                Canvas canvas = myPage.getCanvas();
+               // canvas.drawText("Welcome",50,50,paint);
 
-        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(250, 400, 1).create();
-        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
-        Canvas canvas = myPage.getCanvas();
+                paint.setTextAlign(Paint.Align.CENTER);
+                paint.setTextSize(12.0f);
+                canvas.drawText("JOSAA 2022",pageInfo.getPageWidth()/2,30,paint);
 
-        paint.setTextAlign(Paint.Align.LEFT);
-        paint.setTextSize(8.0f);
-        paint.setColor(Color.BLACK);
+                paint.setTextSize(6.0f);
+                canvas.drawText("IIT NIT IIIT CFTI",pageInfo.getPageWidth()/2,40,paint);
 
-        int startX = 10, startY = 100 , endPos = mypageInfo.getPageWidth()-10;
-        for(int i=0;i<list2.size();i++){
-            filterdata data = list2.get(i);
-            canvas.drawText(data.getText(),startX,startY,paint);
-            startY+=5;
-        }
+                paint.setTextSize(8.0f);
+                canvas.drawText("College w.r.t. Last Year Closing Rank",pageInfo.getPageWidth()/2,60,paint);
 
-        pdfDocument.finishPage(myPage);
-
-
-        File file = new File(Environment.getExternalStorageDirectory(), "Colleges.pdf");
-        try {
-            pdfDocument.writeTo(new FileOutputStream(file));
-
-            Toast.makeText(filter.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        pdfDocument.close();
-    }
+                paint.setTextAlign(Paint.Align.LEFT);
+                paint.setTextSize(9.0f);
 
 
-    private boolean checkPermission() {
-        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
-    }
-
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-
-                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-
-                if (writeStorage && readStorage) {
-                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
-                    finish();
+                int startX = 10, startY = 80, endPos = pageInfo.getPageWidth() - 10;
+                for (int i = 0; i < list2.size(); i++) {
+                    filterdata data = list2.get(i);
+                    canvas.drawText(data.getText(), startX, startY, paint);
+                    canvas.drawText(data.getText2(),startX+200,startY,paint);
+                    startY += 15;
                 }
+
+
+
+                pdfDocument.finishPage(myPage);
+
+                //File file = new File(Environment.getExternalStorageDirectory(),"/FirstPdf.pdf");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/FirstPDF1.pdf");
+                try{
+                    pdfDocument.writeTo(new FileOutputStream(file));
+                    Toast.makeText(filter.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+                }  catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                pdfDocument.close();
             }
-        }
+        });
     }
+
+
+    /* int startX = 10, startY = 20, endPos = pageInfo.getPageWidth() - 10;
+          for (int i = 0; i < list2.size(); i++) {
+             filterdata data = list2.get(i);
+             canvas.drawText(data.getText(), startX, startY, paint);
+             startY += 5;
+         }*/
+
 
 }
