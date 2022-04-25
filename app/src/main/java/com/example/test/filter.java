@@ -37,12 +37,19 @@ import java.util.Comparator;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 public class filter extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private filteradapter adapter;
     private ArrayList<filterdata> list, list2;
-    Button button,button2,buttonpdf;
+    Button button, button2, buttonpdf, buttonexl;
+    private  File filePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "/FirstPDF1.xls");
+    //private File filePath = new File(Environment.getExternalStorageDirectory() + "/Demo.xls");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,7 @@ public class filter extends AppCompatActivity {
                     @Override
                     public int compare(filterdata n1, filterdata n2) {
                         //return n1.getText().compareTo(n2.getText());
-                        return Integer.parseInt(n1.getText2())-Integer.parseInt(n2.getText2());
+                        return Integer.parseInt(n1.getText2()) - Integer.parseInt(n2.getText2());
                     }
                 });
                 adapter.filterList(list2);
@@ -80,7 +87,7 @@ public class filter extends AppCompatActivity {
                     @Override
                     public int compare(filterdata n1, filterdata n2) {
                         //return n1.getText().compareTo(n2.getText());
-                        return Integer.parseInt(n2.getText2())-Integer.parseInt(n1.getText2());
+                        return Integer.parseInt(n2.getText2()) - Integer.parseInt(n1.getText2());
                     }
                 });
                 adapter.filterList(list2);
@@ -89,9 +96,13 @@ public class filter extends AppCompatActivity {
 
 
         buttonpdf = findViewById(R.id.pdf);
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PackageManager.PERMISSION_GRANTED);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE},
+                PackageManager.PERMISSION_GRANTED);
 
         createPdf(list2);
+
+        buttonexl = findViewById(R.id.excel);
+        creatExcel(list2);
 
     }
 
@@ -126,7 +137,7 @@ public class filter extends AppCompatActivity {
         if (filteredlist.isEmpty()) {
             Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
         } else {
-           // button = (Button) findViewById(R.id.sort);
+            // button = (Button) findViewById(R.id.sort);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -135,14 +146,14 @@ public class filter extends AppCompatActivity {
                         @Override
                         public int compare(filterdata n1, filterdata n2) {
                             //return n1.getText().compareTo(n2.getText());
-                            return Integer.parseInt(n1.getText2())-Integer.parseInt(n2.getText2());
+                            return Integer.parseInt(n1.getText2()) - Integer.parseInt(n2.getText2());
                         }
                     });
                     adapter.filterList(filteredlist);
                 }
             });
 
-           // button2 = (Button) findViewById(R.id.dcsort);
+            // button2 = (Button) findViewById(R.id.dcsort);
             button2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -151,7 +162,7 @@ public class filter extends AppCompatActivity {
                         @Override
                         public int compare(filterdata n1, filterdata n2) {
                             //return n1.getText().compareTo(n2.getText());
-                            return Integer.parseInt(n2.getText2())-Integer.parseInt(n1.getText2());
+                            return Integer.parseInt(n2.getText2()) - Integer.parseInt(n1.getText2());
                         }
                     });
                     adapter.filterList(filteredlist);
@@ -209,7 +220,7 @@ public class filter extends AppCompatActivity {
         for (int i = 0; i < n; i++) {
             filterdata data = list.get(i);
             //if (Integer.parseInt(data.getText2()) >= req) {
-            if(Integer.parseInt(data.getText2()) >= req){
+            if (Integer.parseInt(data.getText2()) >= req) {
                 list2.add(data);
             }
         }
@@ -217,7 +228,7 @@ public class filter extends AppCompatActivity {
         if (list2.isEmpty()) {
             Toast.makeText(this, "Please enter valid number", Toast.LENGTH_SHORT).show();
             SearchView searchView = findViewById(R.id.searchView);
-            
+
         }
         adapter = new filteradapter(list2, this);
 
@@ -236,21 +247,21 @@ public class filter extends AppCompatActivity {
                 PdfDocument pdfDocument = new PdfDocument();
                 Paint paint = new Paint();
 
-                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(250,1000,1).create();
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(250, 1000, 1).create();
                 PdfDocument.Page myPage = pdfDocument.startPage(pageInfo);
 
                 Canvas canvas = myPage.getCanvas();
-               // canvas.drawText("Welcome",50,50,paint);
+                // canvas.drawText("Welcome",50,50,paint);
 
                 paint.setTextAlign(Paint.Align.CENTER);
                 paint.setTextSize(12.0f);
-                canvas.drawText("JOSAA 2022",pageInfo.getPageWidth()/2,30,paint);
+                canvas.drawText("JOSAA 2022", pageInfo.getPageWidth() / 2, 30, paint);
 
                 paint.setTextSize(6.0f);
-                canvas.drawText("IIT NIT IIIT CFTI",pageInfo.getPageWidth()/2,40,paint);
+                canvas.drawText("IIT NIT IIIT CFTI", pageInfo.getPageWidth() / 2, 40, paint);
 
                 paint.setTextSize(8.0f);
-                canvas.drawText("College w.r.t. Last Year Closing Rank",pageInfo.getPageWidth()/2,60,paint);
+                canvas.drawText("College w.r.t. Last Year Closing Rank", pageInfo.getPageWidth() / 2, 60, paint);
 
                 paint.setTextAlign(Paint.Align.LEFT);
                 paint.setTextSize(9.0f);
@@ -260,20 +271,19 @@ public class filter extends AppCompatActivity {
                 for (int i = 0; i < list2.size(); i++) {
                     filterdata data = list2.get(i);
                     canvas.drawText(data.getText(), startX, startY, paint);
-                    canvas.drawText(data.getText2(),startX+200,startY,paint);
+                    canvas.drawText(data.getText2(), startX + 200, startY, paint);
                     startY += 15;
                 }
-
 
 
                 pdfDocument.finishPage(myPage);
 
                 //File file = new File(Environment.getExternalStorageDirectory(),"/FirstPdf.pdf");
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/FirstPDF1.pdf");
-                try{
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "/FirstPDF1.pdf");
+                try {
                     pdfDocument.writeTo(new FileOutputStream(file));
                     Toast.makeText(filter.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
-                }  catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -283,12 +293,44 @@ public class filter extends AppCompatActivity {
     }
 
 
-    /* int startX = 10, startY = 20, endPos = pageInfo.getPageWidth() - 10;
-          for (int i = 0; i < list2.size(); i++) {
-             filterdata data = list2.get(i);
-             canvas.drawText(data.getText(), startX, startY, paint);
-             startY += 5;
-         }*/
+    private void creatExcel(ArrayList<filterdata> list2){
+        buttonexl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+                HSSFSheet hssfSheet = hssfWorkbook.createSheet("Custom Sheet");
+
+                for(int i=0;i<list2.size();i++) {
+                  filterdata filterdata = list2.get(i);
+                    HSSFRow hssfRow = hssfSheet.createRow(i);
+                    HSSFCell hssfCell = hssfRow.createCell(0);
+                    HSSFCell hssfCell1 = hssfRow.createCell(2);
+
+                    hssfCell.setCellValue(filterdata.getText());
+                    hssfCell1.setCellValue(filterdata.getText2());
+                }
 
 
-}
+                try {
+                    if (!filePath.exists()){
+                        filePath.createNewFile();
+                    }
+
+                    FileOutputStream fileOutputStream= new FileOutputStream(filePath);
+                    hssfWorkbook.write(fileOutputStream);
+                    Toast.makeText(filter.this, "Excel file generated successfully.", Toast.LENGTH_SHORT).show();
+
+                    if (fileOutputStream!=null){
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+           });
+        }
+
+
+    }

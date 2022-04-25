@@ -23,7 +23,7 @@
         android:orientation="horizontal">
 
     <Button
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="50dp"
         android:hint="incrsesing"
         android:id="@+id/sort"
@@ -31,7 +31,7 @@
         />
 
         <Button
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
             android:hint="decreasing"
             android:id="@+id/dcsort"
@@ -39,10 +39,18 @@
             />
 
         <Button
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
             android:hint="pdf"
             android:id="@+id/pdf"
+            android:layout_marginStart="30dp"
+            />
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:hint="Exl"
+            android:id="@+id/excel"
             android:layout_marginStart="30dp"
             />
 
