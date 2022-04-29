@@ -99,7 +99,7 @@ public class filter extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE},
                 PackageManager.PERMISSION_GRANTED);
 
-        createPdf(list2);
+        //createPdf(list2);
 
         buttonexl = findViewById(R.id.excel);
         creatExcel(list2);
@@ -170,10 +170,9 @@ public class filter extends AppCompatActivity {
             });
 
             adapter.filterList(filteredlist);
-
         }
 
-
+          createPdf(filteredlist);
     }
 
     private void show(int req) {
