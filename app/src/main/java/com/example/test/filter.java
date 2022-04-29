@@ -99,7 +99,7 @@ public class filter extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE},
                 PackageManager.PERMISSION_GRANTED);
 
-        //createPdf(list2);
+        createPdf(list2);
 
         buttonexl = findViewById(R.id.excel);
         creatExcel(list2);
@@ -181,7 +181,7 @@ public class filter extends AppCompatActivity {
         list2 = new ArrayList<>();
 
 
-        list.add(new filterdata("SMVDU chemical", "20"));
+        list.add(new filterdata("SMVDU Mechanical with M.Tech in Manufacturing Engineering(5 Years,B.Tech/M.Tech(Dual Degree))", "20"));
         list.add(new filterdata("SMVDU civil", "25"));
         list.add(new filterdata("SMVDU mechanical", "30"));
         list.add(new filterdata("SMVDU Metallurgy", "35"));
@@ -246,34 +246,46 @@ public class filter extends AppCompatActivity {
                 PdfDocument pdfDocument = new PdfDocument();
                 Paint paint = new Paint();
 
-                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(250, 1000, 1).create();
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(500, 1000, 1).create();
                 PdfDocument.Page myPage = pdfDocument.startPage(pageInfo);
 
                 Canvas canvas = myPage.getCanvas();
                 // canvas.drawText("Welcome",50,50,paint);
 
                 paint.setTextAlign(Paint.Align.CENTER);
-                paint.setTextSize(12.0f);
-                canvas.drawText("JOSAA 2022", pageInfo.getPageWidth() / 2, 30, paint);
-
-                paint.setTextSize(6.0f);
-                canvas.drawText("IIT NIT IIIT CFTI", pageInfo.getPageWidth() / 2, 40, paint);
+                paint.setTextSize(20.0f);
+                canvas.drawText("JOSAA 2022", pageInfo.getPageWidth() / 2, 20, paint);
 
                 paint.setTextSize(8.0f);
-                canvas.drawText("College w.r.t. Last Year Closing Rank", pageInfo.getPageWidth() / 2, 60, paint);
+                canvas.drawText("IIT NIT IIIT CFTI", pageInfo.getPageWidth() / 2, 35, paint);
+
+                paint.setTextSize(12.0f);
+                canvas.drawText("College w.r.t. Last Year Closing Rank", pageInfo.getPageWidth() / 2, 50, paint);
+
+                paint.setTextSize(8.0f);
+                canvas.drawText("App Link : https://leetcode.com/", pageInfo.getPageWidth() / 2, 65, paint);
+                canvas.drawLine(180,66,320,66,paint);
 
                 paint.setTextAlign(Paint.Align.LEFT);
                 paint.setTextSize(9.0f);
 
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(1);
+                canvas.drawRect(8,90,pageInfo.getPageWidth()-10,970,paint);
 
-                int startX = 10, startY = 80, endPos = pageInfo.getPageWidth() - 10;
+                paint.setStrokeWidth(0);
+                paint.setStyle(Paint.Style.FILL);
+
+                int startX = 10, startY = 100, endPos = pageInfo.getPageWidth() - 10;
                 for (int i = 0; i < list2.size(); i++) {
                     filterdata data = list2.get(i);
                     canvas.drawText(data.getText(), startX, startY, paint);
-                    canvas.drawText(data.getText2(), startX + 200, startY, paint);
+                    canvas.drawText(data.getText2(), startX + 450, startY, paint);
+                    canvas.drawLine(startX,startY+3,endPos,startY+3,paint);
                     startY += 15;
                 }
 
+                canvas.drawLine(430,90,430,970,paint);
 
                 pdfDocument.finishPage(myPage);
 
